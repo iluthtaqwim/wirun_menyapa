@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+  <!-- Favicons -->
+  <link rel="apple-touch-icon" href="./assets/img/kit/free/apple-icon.png">
+  <link rel="icon" href="./assets/img/kit/free/favicon.png">
+  <title>
+    Admin
+  </title>
+  <!-- Firebase Component -->
+  <script src="https://www.gstatic.com/firebasejs/3.7.0/firebase.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/5.3.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/5.3.0/firebase-firestore.js"></script>
+  <script src="assets/js/app.js"></script>
+  <script src="assets/js/admin.js"></script>
+  <!--     Fonts and icons     -->
+  <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Roboto+Slab:400,700|Material+Icons" />
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css" />
+  <link rel="stylesheet" href="./assets/css/material-kit.css?v=2.0.2">
+  <link rel="stylesheet" href="./assets/css/style.css">
+  <!-- Documentation extras -->
+  <!-- CSS Just for demo purpose, don't include it in your project -->
+
+</head>
+
+<body>
+  <div class="container">
+    <div class="card" style="padding-top: 20px">
+      <div class="card-header">
+        <h2 class="text-center">CMS Admin</h2>
+      </div>
+      <div class="card-title">
+        <h6 class="text-center">Form admin sudah siap!</h6>
+      </div>
+      <div class="card-body">
+        <div class="form-group">
+          <label for="">Judul Artikel</label>
+          <input type="text" class="form-control" id="etTitle" placeholder="">
+        </div>
+        <div class="form-group">
+          <label for="">Tulis artikel disini</label>
+          <textarea class="form-control" name="name" rows="5" id="etBody"></textarea>
+        </div>
+        <div class="form-group">
+          <input type="file" name="file" id="file" required>
+        </div>
+        <label for="">Label Artikel</label>
+        <div class="form">
+          <label for="" style="padding-right:10px">
+            <input type="checkbox" id="lbKesehatan" value="kesehatan">Kesehatan
+          </label>
+          <label for="" style="padding-right:10px">
+            <input type="checkbox" id="lbPendidikan" value="pendidikan">Pendidikan
+          </label>
+          <label for="" style="padding-right:10px">
+            <input type="checkbox" id="lbPertanian" value="pertanian">Pertanian
+          </label>
+          <label for="" style="padding-right:10px">
+            <input type="checkbox" id="lbKesenian" value="kesenian">Kesenian
+          </label>
+          <label for="" style="padding-right:10px">
+            <input type="checkbox" id="lbBudaya" value="budaya">Budaya
+          </label>
+          <label for="" style="padding-right:10px">
+            <input type="checkbox" id="lbUmkm" value="umkm">UMKM
+          </label>
+
+          <!-- Learn about this code on MDN: https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/file -->
+
+
+        </div>
+        <div class="container">
+          <div class="row">
+              <input type="file" onchange="previewFile()" class="btn btn-primary">
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="mx-auto col-auto">
+      <button type="button" id="fileButton" class="btn btn-primary buttonPost btn-lg" onchange="handleFiles(this.file)"
+        onclick="submit()">Post</button>
+    </div>
+  </div>
+  </div>
+
+  </div>
+  </div>
+
+  <script>
+    var config = {
+      apiKey: "AIzaSyCFwBzRMHDyWlhHpqw33USEiFxob7Jm_Z8",
+      authDomain: "wirun-menyapa-web.firebaseapp.com",
+      databaseURL: "https://wirun-menyapa-web.firebaseio.com",
+      projectId: "wirun-menyapa-web",
+      storageBucket: "wirun-menyapa-web.appspot.com",
+      messagingSenderId: "41442409690"
+    };
+    firebase.initializeApp(config);
+
+    var storageRef = firebase.storage().ref();
+
+
+    var imagesRef = storageRef.child('images');
+    function previewFile() {
+
+      var file = document.querySelector('input[type=file]').files[0];
+
+      var metadata = {
+        contentType: 'image/jpeg' //Tipe File yang dapat di baca, dapat diganti dengan type lain
+      };
+
+      var uploadTask = storageRef.child('images/' + file.name).put(file, metadata); //folder Images pada Storage
+
+      uploadTask.on(firebase.storage.TaskEvent.STATE_CHANGED,
+        function (snapshot) {
+          var progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+          console.log('Upload is ' + progress + '% done');
+          switch (snapshot.state) {
+            case firebase.storage.TaskState.PAUSED:
+              console.log('Upload is paused');
+              break;
+            case firebase.storage.TaskState.RUNNING:
+              console.log('Upload is running');
+              break;
+          }
+        },
+        function (error) {
+          console.log('Upload Error')
+        },
+        function () {
+          var starsRef = storageRef.child('images/' + file.name); //folder Images pada Storage
+          starsRef.getDownloadURL().then(function (url) {
+            document.querySelector('#preview').src = url;
+            var t = document.querySelector('p')
+            t.innerHTML = '<b>Firebase Storage URL: </b>' + url
+          }).catch(function (error) {
+            console.log('Error Download File');
+          });
+        });
+    }
+  </script>
+
+  <script src="./assets/js/core/jquery.min.js"></script>
+  <script src="./assets/js/core/popper.min.js"></script>
+  <script src="./assets/js/bootstrap-material-design.js"></script>
+  <!--  Plugin for Date Time Picker and Full Calendar Plugin  -->
+  <script src="./assets/js/plugins/moment.min.js"></script>
+  <!--	Plugin for the Datepicker, full documentation here: https://github.com/Eonasdan/bootstrap-datetimepicker -->
+  <script src="./assets/js/plugins/bootstrap-datetimepicker.min.js"></script>
+  <!--	Plugin for the Sliders, full documentation here: http://refreshless.com/nouislider/ -->
+  <script src="./assets/js/plugins/nouislider.min.js"></script>
+  <!-- Material Kit Core initialisations of plugins and Bootstrap Material Design Library -->
+  <script src="./assets/js/material-kit.js?v=2.0.2"></script>
+  <script src="assets/js/feedback-btn.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  </script>
+</body>
+
+</html>
